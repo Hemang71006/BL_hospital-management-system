@@ -1,34 +1,23 @@
-
 package com.example.hms.dto;
+
+import com.example.hms.entity.Role;
 
 /**
  * Project Name : Hospital Management System
- * Module       : Authentication - Login Response
+ * Module       : Authentication DTO
  * Author       : Hemang
  * Date         : 09-11-2026
  *
  * Description:
- * Returns login information to the client.
- * JWT token will be added during JWT integration.
+ * Returns login information along with the generated JWT token.
  */
 
 public record LoginResponse(
-
-        // Login success message
         String message,
-
-        // Logged-in user's ID
         Long userId,
-
-        // Logged-in user's name
         String name,
-
-        // Logged-in user's email
         String email,
-
-        // Logged-in user's role
-        String role
-
+        Role role,
+        String token
 ) {
 }
-

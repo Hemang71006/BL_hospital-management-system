@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.hms.dto.LoginRequest;
 import com.example.hms.dto.LoginResponse;
+import com.example.hms.config.JwtService;
 
 /**
  * Project Name : Hospital Management System
@@ -27,12 +28,17 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     // Inject repository and password encoder
-    public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+    public AuthService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     // Register a new user
@@ -59,13 +65,13 @@ public class AuthService {
         // Save the registered user in the database
         User savedUser = userRepository.save(user);
 
-        // Return registration details without exposing the password
+        // Return the registered user's information
         return new RegisterResponse(
-                "User registered successfully",
+                "Registration successful",
                 savedUser.getId(),
                 savedUser.getName(),
                 savedUser.getEmail(),
-                savedUser.getRole().name()
+                savedUser.getRole()
         );
     }
     // Authenticate a registered user using email and password
@@ -83,13 +89,17 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        // Return user details after successful authentication
+        // Generate JWT token after successful login
+        String token = jwtService.generateToken(user.getEmail());
+
+        // Return login details along with the JWT token
         return new LoginResponse(
                 "Login successful",
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRole(),
+                token
         );
     }
 }
