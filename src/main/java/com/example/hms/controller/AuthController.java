@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.hms.dto.LoginRequest;
+import com.example.hms.dto.LoginResponse;
 
 /**
  * Project Name : Hospital Management System
@@ -39,6 +41,16 @@ public class AuthController {
         RegisterResponse response = authService.register(request);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // Authenticate a user and return login details
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        LoginResponse response = authService.login(request);
+
+        return ResponseEntity.ok(response);
     }
 }
 

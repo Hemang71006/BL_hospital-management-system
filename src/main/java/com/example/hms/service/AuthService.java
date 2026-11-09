@@ -8,6 +8,8 @@ import com.example.hms.entity.User;
 import com.example.hms.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.hms.dto.LoginRequest;
+import com.example.hms.dto.LoginResponse;
 
 /**
  * Project Name : Hospital Management System
@@ -64,6 +66,30 @@ public class AuthService {
                 savedUser.getName(),
                 savedUser.getEmail(),
                 savedUser.getRole().name()
+        );
+    }
+    // Authenticate a registered user using email and password
+    public LoginResponse login(LoginRequest request) {
+
+        // Find the user using their email address
+        String email = request.email().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Invalid email or password"));
+
+        // Compare the entered password with the stored BCrypt password
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
+        // Return user details after successful authentication
+        return new LoginResponse(
+                "Login successful",
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name()
         );
     }
 }
