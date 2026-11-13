@@ -2,8 +2,10 @@
 package com.example.hms.repository;
 
 import com.example.hms.entity.Patient;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,98 +37,81 @@ class PatientRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    // Test whether a patient can be saved successfully
+    // Test saving a patient
     @Test
     void shouldSavePatient() {
 
-        // Create a sample patient
         Patient patient = createPatient();
 
-        // Save the patient in the database
         Patient savedPatient = patientRepository.save(patient);
 
-        // Verify that the patient has been saved
         assertThat(savedPatient.getId()).isNotNull();
         assertThat(savedPatient.getName()).isEqualTo("Test Patient");
         assertThat(savedPatient.getAge()).isEqualTo(35);
     }
 
-    // Test whether a patient can be retrieved using patient ID
+    // Test retrieving a patient using ID
     @Test
     void shouldFindPatientById() {
 
-        // Create and save a patient
         Patient patient = patientRepository.saveAndFlush(createPatient());
 
         Long patientId = patient.getId();
 
-        // Clear the persistence context to fetch from the database
+        // Clear persistence context to retrieve from database
         entityManager.clear();
 
-        // Retrieve the patient using ID
         Optional<Patient> result = patientRepository.findById(patientId);
 
-        // Verify the retrieved patient details
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Test Patient");
         assertThat(result.get().getDisease()).isEqualTo("Fever");
     }
 
-    // Test whether patient details can be updated
+    // Test updating patient details
     @Test
     void shouldUpdatePatient() {
 
-        // Create and save a patient
         Patient patient = patientRepository.saveAndFlush(createPatient());
 
         Long patientId = patient.getId();
 
-        // Clear the persistence context
         entityManager.clear();
 
-        // Retrieve the existing patient
         Patient existingPatient = patientRepository.findById(patientId)
                 .orElseThrow();
 
-        // Update the patient's details
         existingPatient.setName("Updated Patient");
         existingPatient.setAge(40);
 
-        // Save the updated patient
         patientRepository.saveAndFlush(existingPatient);
 
-        // Clear the persistence context again
         entityManager.clear();
 
-        // Retrieve the updated patient
         Patient updatedPatient = patientRepository.findById(patientId)
                 .orElseThrow();
 
-        // Verify the updated details
         assertThat(updatedPatient.getName()).isEqualTo("Updated Patient");
         assertThat(updatedPatient.getAge()).isEqualTo(40);
     }
 
-    // Test whether a patient can be deleted using patient ID
+    // Test deleting a patient
     @Test
     void shouldDeletePatient() {
 
-        // Create and save a patient
         Patient patient = patientRepository.saveAndFlush(createPatient());
 
         Long patientId = patient.getId();
 
-        // Delete the patient
         patientRepository.deleteById(patientId);
         patientRepository.flush();
 
-        // Verify that the patient no longer exists
         Optional<Patient> result = patientRepository.findById(patientId);
 
         assertThat(result).isEmpty();
     }
 
-    // Create a reusable sample patient for testing
+    // Create sample patient data for testing
     private Patient createPatient() {
 
         return Patient.builder()
@@ -139,4 +124,3 @@ class PatientRepositoryTest {
                 .build();
     }
 }
-
