@@ -1,10 +1,11 @@
+
 # Hospital Management System using Spring Boot and JWT Authentication
 
 ## 1. Project Overview
 
-The **Hospital Management System** is a simple backend application developed using Spring Boot, Spring Security, JWT Authentication and MySQL.
+The **Hospital Management System (HMS)** is a backend application developed using Spring Boot, Spring Security, JWT Authentication and MySQL.
 
-This project is designed as a student mini-project to understand backend application development, REST APIs, authentication, authorization, database connectivity and CRUD operations.
+This project is designed as a student mini-project to understand backend application development, REST APIs, authentication, authorization, database connectivity, CRUD operations and unit testing.
 
 The application allows users to register and log in. After successful login, the application generates a JWT (JSON Web Token), which is used to access secured patient management APIs.
 
@@ -19,12 +20,14 @@ The main objectives of this project are:
 
 - To understand Spring Boot application structure.
 - To implement user registration and login.
-- To securely store passwords using BCrypt encryption.
+- To securely store passwords using BCrypt hashing.
 - To generate and validate JWT tokens.
 - To secure REST APIs using Spring Security.
 - To perform CRUD operations on patient records.
 - To connect a Spring Boot application with MySQL.
+- To implement unit and repository testing.
 - To test REST APIs using Postman.
+- To understand Git branching, feature development and merging.
 
 ## 3. Technologies Used
 
@@ -41,7 +44,11 @@ The main objectives of this project are:
 | Lombok | Reducing boilerplate code |
 | Maven 3.10.0 | Dependency and build management |
 | Jakarta Validation | Request data validation |
+| JUnit 5 | Unit testing |
+| Mockito | Mocking dependencies during testing |
+| AssertJ | Writing readable test assertions |
 | Postman | API testing |
+| Git and GitHub | Version control and project management |
 
 ## 4. Project Modules
 
@@ -58,6 +65,7 @@ The Authentication Module manages user registration and login.
 - Verify login credentials.
 - Generate JWT tokens after successful login.
 - Validate JWT tokens for secured requests.
+- Load registered user details for Spring Security.
 
 **Authentication APIs:**
 
@@ -96,45 +104,65 @@ All patient APIs are protected using JWT authentication.
 hospital-management-system/
 │
 ├── src/
-│   └── main/
-│       ├── java/
-│       │   └── com/example/hms/
-│       │       │
-│       │       ├── config/
-│       │       │   ├── SecurityConfig.java
-│       │       │   ├── JwtAuthenticationFilter.java
-│       │       │   ├── JwtService.java
-│       │       │   └── PasswordConfig.java
-│       │       │
-│       │       ├── controller/
-│       │       │   ├── AuthController.java
-│       │       │   └── PatientController.java
-│       │       │
-│       │       ├── dto/
-│       │       │   ├── RegisterRequest.java
-│       │       │   ├── RegisterResponse.java
-│       │       │   ├── LoginRequest.java
-│       │       │   ├── LoginResponse.java
-│       │       │   └── PatientDto.java
-│       │       │
-│       │       ├── entity/
-│       │       │   ├── User.java
-│       │       │   ├── Role.java
-│       │       │   └── Patient.java
-│       │       │
-│       │       ├── repository/
-│       │       │   ├── UserRepository.java
-│       │       │   └── PatientRepository.java
-│       │       │
-│       │       ├── service/
-│       │       │   ├── AuthService.java
-│       │       │   ├── PatientService.java
-│       │       │   └── CustomUserDetailsService.java
-│       │       │
-│       │       └── HospitalManagementApplication.java
-│       │
-│       └── resources/
-│           └── application.properties
+│   ├── main/
+│   │   ├── java/com/example/hms/
+│   │   │   │
+│   │   │   ├── config/
+│   │   │   │   ├── JwtAuthenticationFilter.java
+│   │   │   │   ├── JwtService.java
+│   │   │   │   ├── PasswordConfig.java
+│   │   │   │   └── SecurityConfig.java
+│   │   │   │
+│   │   │   ├── controller/
+│   │   │   │   ├── AuthController.java
+│   │   │   │   └── PatientController.java
+│   │   │   │
+│   │   │   ├── dto/
+│   │   │   │   ├── LoginRequest.java
+│   │   │   │   ├── LoginResponse.java
+│   │   │   │   ├── PatientDto.java
+│   │   │   │   ├── RegisterRequest.java
+│   │   │   │   └── RegisterResponse.java
+│   │   │   │
+│   │   │   ├── entity/
+│   │   │   │   ├── Patient.java
+│   │   │   │   ├── Role.java
+│   │   │   │   └── User.java
+│   │   │   │
+│   │   │   ├── repository/
+│   │   │   │   ├── PatientRepository.java
+│   │   │   │   └── UserRepository.java
+│   │   │   │
+│   │   │   ├── service/
+│   │   │   │   ├── AuthService.java
+│   │   │   │   ├── CustomUserDetailsService.java
+│   │   │   │   └── PatientService.java
+│   │   │   │
+│   │   │   └── HospitalManagementSystemApplication.java
+│   │   │
+│   │   └── resources/
+│   │       └── application.properties
+│   │
+│   └── test/
+│       └── java/com/example/hms/
+│           │
+│           ├── config/
+│           │   ├── JwtAuthenticationFilterTest.java
+│           │   ├── JwtServiceTest.java
+│           │   ├── PasswordConfigTest.java
+│           │   └── SecurityConfigTest.java
+│           │
+│           ├── repository/
+│           │   ├── PatientRepositoryTest.java
+│           │   └── UserRepositoryTest.java
+│           │
+│           ├── service/
+│           │   ├── AuthLoginTest.java
+│           │   ├── AuthRegistrationTest.java
+│           │   ├── CustomUserDetailsServiceTest.java
+│           │   └── PatientServiceTest.java
+│           │
+│           └── HospitalManagementSystemApplicationTests.java
 │
 ├── pom.xml
 ├── mvnw
@@ -145,7 +173,7 @@ hospital-management-system/
 
 ## 6. Package and Class Responsibilities
 
-### Config Package
+### 6.1 Config Package
 
 Contains security and configuration-related classes.
 
@@ -154,14 +182,14 @@ Contains security and configuration-related classes.
 - **JwtService.java:** Generates JWT tokens, extracts usernames and validates tokens.
 - **PasswordConfig.java:** Provides the BCrypt password encoder bean.
 
-### Controller Package
+### 6.2 Controller Package
 
 Handles incoming HTTP requests and returns API responses.
 
 - **AuthController.java:** Handles user registration and login.
 - **PatientController.java:** Handles patient CRUD operations.
 
-### DTO Package
+### 6.3 DTO Package
 
 DTO (Data Transfer Object) classes transfer data between the client and application without directly exposing database entities.
 
@@ -171,7 +199,7 @@ DTO (Data Transfer Object) classes transfer data between the client and applicat
 - **LoginResponse.java:** Returns login information and JWT token.
 - **PatientDto.java:** Transfers patient information.
 
-### Entity Package
+### 6.4 Entity Package
 
 Contains Java classes mapped to database tables.
 
@@ -179,14 +207,14 @@ Contains Java classes mapped to database tables.
 - **Role.java:** Defines user roles such as ADMIN and USER.
 - **Patient.java:** Represents a patient record.
 
-### Repository Package
+### 6.5 Repository Package
 
 Contains interfaces responsible for database operations.
 
 - **UserRepository.java:** Provides user-related database operations, including searching by email.
 - **PatientRepository.java:** Provides patient CRUD database operations.
 
-### Service Package
+### 6.6 Service Package
 
 Contains the application's business logic.
 
@@ -230,24 +258,28 @@ Hibernate automatically creates or updates the tables using the configured JPA s
 
 JWT stands for **JSON Web Token**. It is used to authenticate users and secure APIs without maintaining server-side login sessions.
 
-### How JWT Authentication Works
+### 8.1 How JWT Authentication Works
 
 1. A user registers using their name, email and password.
-2. The application encodes the password using BCrypt and saves the user in MySQL.
-3. The user sends their email and password to the login API.
-4. The application verifies the login credentials.
-5. If the credentials are correct, a JWT token is generated.
-6. The user sends the token in the Authorization header when accessing patient APIs.
-7. The JWT authentication filter validates the token.
-8. If the token is valid, Spring Security allows the request to continue.
+2. The application validates the registration details.
+3. The password is encoded using BCrypt and the user is saved in MySQL.
+4. The user sends their email and password to the login API.
+5. The application retrieves the user and verifies the credentials.
+6. If the credentials are correct, a JWT token is generated.
+7. The token is returned to the client.
+8. The client sends the token in the Authorization header when accessing patient APIs.
+9. The JWT authentication filter extracts and validates the token.
+10. The user is loaded from the database using CustomUserDetailsService.
+11. If the token is valid, authentication is stored in the Spring Security context.
+12. Spring Security allows the authenticated request to continue to the patient controller.
 
-### Authorization Header
+### 8.2 Authorization Header
 
-```http
+```text
 Authorization: Bearer <your_jwt_token>
 ```
 
-### Security Features
+### 8.3 Security Features
 
 - Passwords are stored in BCrypt-encoded form.
 - JWT tokens are signed using a secret key.
@@ -255,6 +287,7 @@ Authorization: Bearer <your_jwt_token>
 - Authentication endpoints are publicly accessible.
 - Patient APIs require authentication.
 - Spring Security uses stateless session management.
+- CSRF protection is disabled for this stateless API configuration.
 
 ## 9. Database Configuration
 
@@ -282,6 +315,7 @@ jwt.expiration=86400000
 - Create a MySQL database named `hms_jwt_db`.
 - Configure the `DB_PASSWORD` environment variable with your MySQL password.
 - Configure the `JWT_SECRET` environment variable with a secure Base64-encoded secret.
+- The JWT expiration value is in milliseconds. `86400000` represents 24 hours.
 - Never commit actual database passwords or JWT secrets to GitHub.
 
 ## 10. How to Run the Project
@@ -295,6 +329,7 @@ Install the following software:
 - MySQL 8
 - IntelliJ IDEA or another Java IDE
 - Postman
+- Git
 
 ### Step 1: Clone the Repository
 
@@ -310,10 +345,11 @@ cd BL_hospital-management-system
 
 ### Step 3: Switch to the Develop Branch
 
-The application source code is maintained in the `develop` branch.
+The completed application source code is maintained in the `develop` branch.
 
 ```bash
 git switch develop
+git pull origin develop
 ```
 
 ### Step 4: Create the MySQL Database
@@ -326,7 +362,7 @@ CREATE DATABASE hms_jwt_db;
 
 ### Step 5: Configure Environment Variables
 
-Configure these environment variables on your system:
+Configure the following environment variables on your system:
 
 ```text
 DB_PASSWORD = your_mysql_password
@@ -377,7 +413,9 @@ http://localhost:8080/api/auth/register
 }
 ```
 
-The application registers the user and stores the encoded password in MySQL. Public registration assigns the default USER role.
+The application registers the user and stores the encoded password in MySQL.
+
+Public registration assigns the default USER role. Users cannot select their own role during registration.
 
 ### 11.2 Login User
 
@@ -501,7 +539,7 @@ http://localhost:8080/api/patients/1
 
 ## 12. HTTP Status Codes
 
-The application uses HTTP status codes to indicate API results.
+The following HTTP status codes are relevant to the application's API operations.
 
 | Status Code | Meaning |
 |---|---|
@@ -513,9 +551,13 @@ The application uses HTTP status codes to indicate API results.
 | 404 Not Found | Requested resource not found |
 | 500 Internal Server Error | Unexpected server error |
 
+The actual status code depends on the controller response and exception handling configured in the application.
+
 ## 13. Project Architecture
 
 The application follows a layered architecture.
+
+### 13.1 Layered Architecture
 
 ```text
               Client / Postman
@@ -530,70 +572,271 @@ The application follows a layered architecture.
                 Repository
                      |
                      v
-                  MySQL
+                   MySQL
 ```
 
-**JWT Security Flow:**
+### 13.2 JWT Security Flow
 
 ```text
-       User Login
-            |
-            v
-     AuthController
-            |
-            v
-       AuthService
-            |
-            v
-    Verify Credentials
-            |
-            v
-      Generate JWT
-            |
-            v
-      Return Token
-            |
-            v
-   Client Sends Token
-            |
-            v
- JWT Authentication Filter
-            |
-            v
-    Validate JWT Token
-            |
-            v
-    Spring Security
-            |
-            v
-   Patient Controller
+             User Registration
+                     |
+                     v
+               AuthController
+                     |
+                     v
+                 AuthService
+                     |
+                     v
+             Encode Password
+                 using BCrypt
+                     |
+                     v
+                 MySQL
+                     |
+                     |
+                User Login
+                     |
+                     v
+               AuthController
+                     |
+                     v
+                 AuthService
+                     |
+                     v
+            Verify Credentials
+                     |
+                     v
+               Generate JWT
+                     |
+                     v
+               Return Token
+                     |
+                     v
+            Client Sends Token
+                     |
+                     v
+          JWT Authentication Filter
+                     |
+                     v
+              Validate Token
+                     |
+                     v
+          CustomUserDetailsService
+                     |
+                     v
+          Spring Security Context
+                     |
+                     v
+             Patient Controller
+                     |
+                     v
+              Patient Service
+                     |
+                     v
+             Patient Repository
+                     |
+                     v
+                  MySQL
 ```
 
 ## 14. Testing and Verification
 
-The project was tested using Postman and Maven.
+The project includes automated tests using JUnit 5, Mockito and AssertJ.
 
-The following operations were verified:
+Tests are organized according to the application packages.
 
-- User registration.
-- Password encoding using BCrypt.
-- User login.
-- JWT token generation.
-- Accessing patient APIs using a valid token.
-- Blocking access without a valid token.
-- Adding patient records.
-- Retrieving all patients.
-- Retrieving a patient by ID.
-- Updating patient details.
-- Deleting patient records.
+### 14.1 Application Context Testing
 
-The Maven build and test command is:
+**HospitalManagementSystemApplicationTests.java**
+
+- Verifies that the Spring Boot application context loads successfully.
+
+### 14.2 Repository Testing
+
+**UserRepositoryTest.java**
+
+Tests user database operations:
+
+- Save and retrieve a user by email.
+- Check whether an email exists.
+- Verify behavior when an email does not exist.
+
+**PatientRepositoryTest.java**
+
+Tests patient database operations:
+
+- Save a patient.
+- Find a patient by ID.
+- Update patient information.
+- Delete a patient.
+
+### 14.3 Patient Service Testing
+
+**PatientServiceTest.java**
+
+Tests patient business logic:
+
+- Add a patient.
+- Retrieve all patients.
+- Retrieve a patient by ID.
+- Update patient details.
+- Delete a patient.
+- Handle missing patient records during retrieval, updating and deletion.
+
+### 14.4 Authentication Testing
+
+**AuthRegistrationTest.java**
+
+Tests user registration:
+
+- Successful registration.
+- Password encoding.
+- Default USER role assignment.
+- Email normalization.
+- Duplicate email rejection.
+- Registration response details.
+
+**AuthLoginTest.java**
+
+Tests user login:
+
+- Successful login.
+- Password verification.
+- Rejection of incorrect passwords.
+- Rejection of unknown email addresses.
+- Email normalization.
+- Login response details.
+
+### 14.5 JWT and Security Testing
+
+**JwtServiceTest.java**
+
+Tests JWT functionality:
+
+- Token generation.
+- Username extraction.
+- Validation of a valid token.
+- Rejection of a token for a different user.
+- Expired token handling.
+
+**JwtAuthenticationFilterTest.java**
+
+Tests JWT authentication filter behavior:
+
+- Requests without an Authorization header.
+- Requests with a non-Bearer Authorization header.
+- Authentication using a valid token.
+- Handling of an invalid token.
+- Preservation of existing authentication.
+
+**CustomUserDetailsServiceTest.java**
+
+Tests user loading for Spring Security:
+
+- Loading an existing user.
+- Verifying the username.
+- Verifying the password and role.
+- Handling a user that does not exist.
+
+**PasswordConfigTest.java**
+
+Tests password configuration:
+
+- Creation of the BCrypt password encoder.
+- Password encoding.
+- Matching the correct password.
+- Rejecting an incorrect password.
+
+**SecurityConfigTest.java**
+
+Contains a basic configuration object-creation test.
+
+### 14.6 Running Tests
+
+Run all tests using:
 
 ```bash
 mvn clean test
 ```
 
-## 15. Limitations
+Run a specific test class using:
+
+```bash
+mvn test -Dtest=PatientServiceTest
+```
+
+Run multiple test classes using:
+
+```bash
+mvn test -Dtest=JwtServiceTest,JwtAuthenticationFilterTest
+```
+
+The Maven test report displays the number of tests executed, failures, errors and skipped tests.
+
+## 15. Git and GitHub Workflow
+
+The project uses Git feature branches to organize development.
+
+The main development branch is:
+
+```text
+develop
+```
+
+Feature branches:
+
+```text
+feature/database-configuration
+feature/entity-repository
+feature/patient-crud
+feature/auth-registration
+feature/auth-login
+feature/jwt-security
+```
+
+Each feature was developed and tested independently before being merged into `develop`.
+
+### Git Commands
+
+Check the current branch:
+
+```bash
+git branch
+```
+
+Check working tree status:
+
+```bash
+git status
+```
+
+Switch to develop:
+
+```bash
+git switch develop
+```
+
+Pull the latest changes:
+
+```bash
+git pull origin develop
+```
+
+Merge a feature branch:
+
+```bash
+git merge --no-ff feature/jwt-security
+```
+
+Push develop to GitHub:
+
+```bash
+git push origin develop
+```
+
+The feature branches are retained after merging.
+
+## 16. Limitations
 
 This version intentionally focuses on authentication and patient CRUD operations.
 
@@ -607,7 +850,7 @@ The following features are not included:
 - Advanced role-based authorization.
 - Pagination and search functionality.
 
-## 16. Future Enhancements
+## 17. Future Enhancements
 
 The application can be extended in the future with:
 
@@ -619,14 +862,14 @@ The application can be extended in the future with:
 - Pagination.
 - Swagger API documentation.
 
-## 17. Conclusion
+## 18. Conclusion
 
-The Hospital Management System is a small backend application developed using Spring Boot, Spring Security, JWT, Spring Data JPA and MySQL.
+The Hospital Management System is a backend application developed using Spring Boot, Spring Security, JWT, Spring Data JPA and MySQL.
 
-It demonstrates important backend development concepts such as REST API creation, layered architecture, database connectivity, user authentication, password encoding, JWT token validation and secured CRUD operations.
+It demonstrates important backend development concepts such as REST API creation, layered architecture, database connectivity, user authentication, password encoding, JWT token validation, secured CRUD operations and automated testing.
 
 The project is intentionally limited to two modules: Authentication and Patient Management. This makes it suitable for student learning, practical demonstrations, internship preparation and project presentations.
 
-## 18. One-Line Project Summary
+## 19. One-Line Project Summary
 
 A simple Hospital Management System backend built using Spring Boot, Spring Security, JWT Authentication and MySQL, providing secure user authentication and patient CRUD operations.
